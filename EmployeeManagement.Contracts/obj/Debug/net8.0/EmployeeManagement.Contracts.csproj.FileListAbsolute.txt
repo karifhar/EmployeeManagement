@@ -1,0 +1,11 @@
+D:\Learn\EmployeeManagement\EmployeeManagement.Contracts\bin\Debug\net8.0\EmployeeManagement.Contracts.deps.json
+D:\Learn\EmployeeManagement\EmployeeManagement.Contracts\bin\Debug\net8.0\EmployeeManagement.Contracts.dll
+D:\Learn\EmployeeManagement\EmployeeManagement.Contracts\bin\Debug\net8.0\EmployeeManagement.Contracts.pdb
+D:\Learn\EmployeeManagement\EmployeeManagement.Contracts\obj\Debug\net8.0\EmployeeManagement.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+D:\Learn\EmployeeManagement\EmployeeManagement.Contracts\obj\Debug\net8.0\EmployeeManagement.Contracts.AssemblyInfoInputs.cache
+D:\Learn\EmployeeManagement\EmployeeManagement.Contracts\obj\Debug\net8.0\EmployeeManagement.Contracts.AssemblyInfo.cs
+D:\Learn\EmployeeManagement\EmployeeManagement.Contracts\obj\Debug\net8.0\EmployeeManagement.Contracts.csproj.CoreCompileInputs.cache
+D:\Learn\EmployeeManagement\EmployeeManagement.Contracts\obj\Debug\net8.0\EmployeeManagement.Contracts.dll
+D:\Learn\EmployeeManagement\EmployeeManagement.Contracts\obj\Debug\net8.0\refint\EmployeeManagement.Contracts.dll
+D:\Learn\EmployeeManagement\EmployeeManagement.Contracts\obj\Debug\net8.0\EmployeeManagement.Contracts.pdb
+D:\Learn\EmployeeManagement\EmployeeManagement.Contracts\obj\Debug\net8.0\ref\EmployeeManagement.Contracts.dll
