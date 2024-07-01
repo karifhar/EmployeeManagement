@@ -11,13 +11,12 @@
                 <div class="col col-md-4 align-content-center text-center">
                         @if (Model.Gender == GenderEnum.Male)
                         {
-                            <img class="card-img w-50 m-3" src="~/img/undraw_male_avatar_g98d.min.svg" alt="">
+                            <img class="card-img w-50 m-3" src="~/img/undraw_male_avatar_g98d.min.svg" asp-append-version="true" alt="">
                         }
                         else
                         {
-                            <img class="card-img w-75 m-3" src="~/img/undraw_Female_avatar_efig.png" alt="">
+                        <img class="card-img w-75 m-3" src="~/img/undraw_Female_avatar_efig.png" asp-append-version="true" alt="">
                         }
-                    
                 </div>
                 <div class="col col-md-8">
                     <div class="card-body">
@@ -28,7 +27,7 @@
                         <p class="card-text">@Model.Departement</p>
                     </div>
                     <div class="card-footer d-flex justify-content-center flex-wrap">
-                            <a href="#" class="btn btn-primary m-1">Back</a>  
+                            <a asp-controller="employee" asp-action="index" class="btn btn-primary m-1">Back</a>  
                             <a href="#" class="btn btn-primary m-1">Edit</a>
                             <a href="#" class="btn btn-danger m-1">Delete</a>
                     </div>
