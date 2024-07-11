@@ -25,10 +25,17 @@ jobs:
         dotnet publish -c Release -o ./publish
 
     - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@v2
-      with:
-        REMOTE_HOST: ${{ secrets.SERVER_IP }}
-        REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+      env:
         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-        LOCAL_PATH: ./publish/
-        REMOTE_PATH: /var/www/myapp  # Adjust to your deployment path
+        SSH_PASSPHRASE: ${{ secrets.SERVER_SSH_PASSPHRASE }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > private_key
+        chmod 600 private_key
+        # Start the ssh-agent and add the private key
+        eval $(ssh-agent -s)
+        echo "$SSH_PASSPHRASE" | ssh-add private_key
+        # Securely copy the published files to the server
+        scp -o StrictHostKeyChecking=no -i private_key -r ./publish/* ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:/var/www/myapp
+        # Restart the application on the server
+        ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} 'sudo systemctl restart myapp'
+      shell: bash
