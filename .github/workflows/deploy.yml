@@ -22,7 +22,7 @@ jobs:
       run: |
         dotnet restore
         dotnet build --configuration Release --no-restore
-        dotnet publish -c Release -o ./publish
+        dotnet publish -c Release -o /var/www/myapp
 
     - name: Install sshpass and expect
       run: sudo apt-get install sshpass expect
@@ -50,7 +50,7 @@ jobs:
         # Use expect to handle SSH password and sudo password prompts
 
         expect << EOF
-        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "echo $SERVER_SSH_PASSWORD | sudo -S su - && cd  ~/scripts/deploy.sh"
+        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "echo $SERVER_SSH_PASSWORD | sudo -S su - ~/scripts/deploy.sh"
         expect {
           "password:" { send "$SERVER_SSH_PASSWORD\r" }
           "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
