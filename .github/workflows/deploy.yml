@@ -13,22 +13,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup SSH and install dependencies
+    - name: Run deployment script
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+        SERVER_SSH_PASSPHRASE: ${{ secrets.SERVER_SSH_PASSPHRASE }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_USER: ${{ secrets.SERVER_USERNAME }}
+        SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}
       run: |
         mkdir -p ~/.ssh
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
-        sudo apt-get update
-        sudo apt-get install -y sshpass
-
-    - name: Deploy to server
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        SERVER_SSH_PASSPHRASE: ${{ secrets.SERVER_SSH_PASSPHRASE }}
-        SERVER_IP: ${{ secrets.SERVER_IP }}
-        SERVER_USER: ${{ secrets.SERVER_USER }}
-        SSH_PORT: ${{ secrets.SSH_PORT }}
-        SERVER_USER_PASSWORD: ${{ secrets.SERVER_USER_PASSWORD }}
-      run: |
-        sshpass -p "$SERVER_USER_PASSWORD" ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SERVER_USER@$SERVER_IP 'bash -s' < ~/scripts/deploy.sh
+        echo "$SERVER_SSH_PASSPHRASE" | sshpass ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SERVER_USER@$SERVER_IP 'bash -s' < ~/scripts/deploy.sh
