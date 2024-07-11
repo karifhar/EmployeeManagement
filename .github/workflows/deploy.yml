@@ -49,7 +49,7 @@ jobs:
 
         # Use expect to handle SSH password and sudo password prompts
         expect << EOF
-        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "sudo mkdir -p /var/www/myapp"
+        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "echo $SERVER_SSH_PASSWORD | sudo -S mkdir -p /var/www/myapp"
         expect {
           "password:" { send "$SERVER_SSH_PASSWORD\r" }
           "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
@@ -67,7 +67,7 @@ jobs:
         EOF
 
         expect << EOF
-        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "sudo systemctl restart myapp"
+        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "echo $SERVER_SSH_PASSWORD | sudo -S systemctl restart myapp"
         expect {
           "password:" { send "$SERVER_SSH_PASSWORD\r" }
           "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
