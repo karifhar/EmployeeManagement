@@ -1,38 +1,76 @@
-name: Deploy to Server
+name: CI/CD for My C# Application
 
 on:
   push:
     branches:
-      - main  # Adjust to your main branch name
+      - main  # Change this to your main branch name
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup .NET Core
+    - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '8.x'  # Adjust to your .NET Core 8 version
+        dotnet-version: '8.0.x'  # Use .NET 8.0 SDK
 
-    - name: Build
-      run: dotnet build --configuration Release
+    - name: Build and Publish
+      run: |
+        dotnet restore
+        dotnet build --configuration Release --no-restore
+        dotnet publish -c Release -o ./publish
 
-    - name: Publish
-      run: dotnet publish -c Release -o ./publish
+    - name: Install sshpass and expect
+      run: sudo apt-get install sshpass expect
 
-    - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@v0.2.0
-      with:
-        server: ${{ secrets.SERVER_IP }}
-        username: ${{ secrets.SERVER_USERNAME }}
-        key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-        passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
-        local: ./publish  # Path to the published files on GitHub runner
-        remote: /var/www/myapp  # Remote path where files should be copied
+    - name: Create SSH directory
+      run: mkdir -p ~/.ssh
 
-    - name: Clean up
-      run: rm -rf ./publish
+    - name: Add SSH Host Key
+      run: |
+        ssh-keyscan -p ${{ secrets.SERVER_SSH_PORT }} ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+    - name: Deploy to Server with sudo access
+      env:
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+        SERVER_SSH_PASSWORD: ${{ secrets.SERVER_SSH_PASSWORD }}
+        SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}  # Adjust if your SSH port is different
+        SSH_PASSPHRASE: ${{ secrets.SERVER_SSH_PASSPHRASE }}
+        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+      run: |
+        # Save SSH private key to a file and set permissions
+        echo "$SSH_PRIVATE_KEY" > private_key
+        chmod 600 private_key
+
+        # Use expect to handle SSH password and sudo password prompts
+        expect << EOF
+        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "sudo mkdir -p /var/www/myapp"
+        expect {
+          "password:" { send "$SERVER_SSH_PASSWORD\r" }
+          "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
+        }
+        expect eof
+        EOF
+
+        expect << EOF
+        spawn scp -o StrictHostKeyChecking=no -i private_key -P $SSH_PORT -r ./publish/* $SERVER_USERNAME@$SERVER_IP:/var/www/myapp
+        expect {
+          "password:" { send "$SERVER_SSH_PASSWORD\r" }
+          "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
+        }
+        expect eof
+        EOF
+
+        expect << EOF
+        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "sudo systemctl restart myapp"
+        expect {
+          "password:" { send "$SERVER_SSH_PASSWORD\r" }
+          "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
+        }
+        expect eof
+        EOF
