@@ -24,30 +24,51 @@ jobs:
         dotnet build --configuration Release --no-restore
         dotnet publish -c Release -o ./publish
 
-    - name: Install sshpass
-      run: sudo apt-get install sshpass
+    - name: Install sshpass and expect
+      run: sudo apt-get install sshpass expect
 
-    - name: Debug SSH Connection
+    - name: Create SSH directory
+      run: mkdir -p ~/.ssh
+
+    - name: Add SSH Host Key
+      run: |
+        ssh-keyscan -p ${{ secrets.SERVER_SSH_PORT }} ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+    - name: Deploy to Server with sudo access
       env:
         SERVER_IP: ${{ secrets.SERVER_IP }}
         SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
         SERVER_SSH_PASSWORD: ${{ secrets.SERVER_SSH_PASSWORD }}
         SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}  # Adjust if your SSH port is different
       run: |
-        echo "Testing SSH connection to $SERVER_IP as $SERVER_USERNAME"
-        sshpass -p "$SERVER_SSH_PASSWORD" ssh -vvv -o StrictHostKeyChecking=no -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "echo Connected successfully"
+        # Save SSH private key to a file and set permissions
+        echo "$SSH_PRIVATE_KEY" > private_key
+        chmod 600 private_key
 
-    - name: Deploy to Server
-      env:
-        SERVER_IP: ${{ secrets.SERVER_IP }}
-        SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
-        SERVER_SSH_PASSWORD: ${{ secrets.SERVER_SSH_PASSWORD }}
-        SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}  # Adjust if your SSH port is different
-      run: |
-        sshpass -p "$SERVER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "mkdir -p /var/www/myapp"
+        # Use expect to handle SSH password and sudo password prompts
+        expect << EOF
+        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "sudo mkdir -p /var/www/myapp"
+        expect {
+          "password:" { send "$SERVER_SSH_PASSWORD\r" }
+          "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
+        }
+        expect eof
+        EOF
 
-        # Copy published files to server
-        sshpass -p "$SERVER_SSH_PASSWORD" scp -o StrictHostKeyChecking=no -P $SSH_PORT -r ./publish/* $SERVER_USERNAME@$SERVER_IP:/var/www/myapp
+        expect << EOF
+        spawn scp -o StrictHostKeyChecking=no -i private_key -P $SSH_PORT -r ./publish/* $SERVER_USERNAME@$SERVER_IP:/var/www/myapp
+        expect {
+          "password:" { send "$SERVER_SSH_PASSWORD\r" }
+          "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
+        }
+        expect eof
+        EOF
 
-        # Restart application (replace with your application specific command)
-        sshpass -p "$SERVER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "sudo systemctl restart myapp"
+        expect << EOF
+        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "sudo systemctl restart myapp"
+        expect {
+          "password:" { send "$SERVER_SSH_PASSWORD\r" }
+          "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
+        }
+        expect eof
+        EOF
