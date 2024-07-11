@@ -38,7 +38,7 @@ jobs:
       env:
         SERVER_IP: ${{ secrets.SERVER_IP }}
         SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
-        SERVER_SSH_PASSWORD: ${{ secrets.SERVER_SSH_PASSWORD }}
+        SERVER_SSH_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}  # Adjust if your SSH port is different
         SSH_PASSPHRASE: ${{ secrets.SERVER_SSH_PASSPHRASE }}
         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
