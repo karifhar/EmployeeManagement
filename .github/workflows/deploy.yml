@@ -1,9 +1,9 @@
-name: Deploy
+name: Deploy to VPS
 
 on:
   push:
     branches:
-      - main
+      - main  # Or your default branch
 
 jobs:
   deploy:
@@ -13,16 +13,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Run deployment script
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-        SERVER_SSH_PASSPHRASE: ${{ secrets.SERVER_SSH_PASSPHRASE }}
-        SERVER_IP: ${{ secrets.SERVER_IP }}
-        SERVER_USER: ${{ secrets.SERVER_USERNAME }}
-        SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}
-      run: |
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
-        echo "$SERVER_SSH_PASSPHRASE" | sshpass ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SERVER_USER@$SERVER_IP 'bash -s' < /scripts/deploy.sh
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@master
+      with:
+        host: 157.173.220.60
+        username: thedemit
+        key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+        script: |
+          cd /MyApp/
+          git pull origin main
