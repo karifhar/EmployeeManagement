@@ -22,7 +22,7 @@ jobs:
       run: |
         dotnet restore
         dotnet build --configuration Release --no-restore
-        dotnet publish -c Release -o /var/www/myapp
+        dotnet publish -c Release -o ./publish
 
     - name: Install sshpass and expect
       run: sudo apt-get install sshpass expect
