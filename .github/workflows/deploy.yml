@@ -31,13 +31,14 @@ jobs:
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
         SSH_PASSPHRASE: ${{ secrets.SERVER_SSH_PASSPHRASE }}
+        SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}
       run: |
         # Save the SSH private key to a file
         echo "$SSH_PRIVATE_KEY" > private_key
         chmod 600 private_key
 
         # Use sshpass to handle the SSH passphrase
-        sshpass -p "$SSH_PASSPHRASE" ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} 'mkdir -p /var/www/myapp'
-        sshpass -p "$SSH_PASSPHRASE" scp -o StrictHostKeyChecking=no -i private_key -r ./publish/* ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:/var/www/myapp
-        sshpass -p "$SSH_PASSPHRASE" ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} 'sudo systemctl restart myapp'
+        sshpass -p "$SSH_PASSPHRASE" ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} 'mkdir -p /var/www/myapp'
+        sshpass -p "$SSH_PASSPHRASE" scp -o StrictHostKeyChecking=no -i private_key -P $SSH_PORT -r ./publish/* ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:/var/www/myapp
+        sshpass -p "$SSH_PASSPHRASE" ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} 'sudo systemctl restart myapp'
       shell: bash
