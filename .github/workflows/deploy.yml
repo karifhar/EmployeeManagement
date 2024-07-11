@@ -27,6 +27,9 @@ jobs:
     - name: Install sshpass and expect
       run: sudo apt-get install sshpass expect
 
+    - name: Create SSH directory
+      run: mkdir -p ~/.ssh
+
     - name: Add SSH Host Key
       run: |
         ssh-keyscan -p ${{ secrets.SERVER_SSH_PORT }} ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
@@ -35,29 +38,31 @@ jobs:
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
         SSH_PASSPHRASE: ${{ secrets.SERVER_SSH_PASSPHRASE }}
-        SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}  # Add this line for SSH port
+        SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
       run: |
         # Save the SSH private key to a file
         echo "$SSH_PRIVATE_KEY" > private_key
         chmod 600 private_key
 
-        # Use expect to handle the SSH passphrase
+        # Use expect to handle the SSH passphrase and run commands
         expect << EOF
-        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} "mkdir -p /var/www/myapp"
+        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "mkdir -p /var/www/myapp"
         expect "Enter passphrase for key 'private_key':"
         send "$SSH_PASSPHRASE\r"
         interact
         EOF
 
         expect << EOF
-        spawn scp -o StrictHostKeyChecking=no -i private_key -P $SSH_PORT -r ./publish/* ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:/var/www/myapp
+        spawn scp -o StrictHostKeyChecking=no -i private_key -P $SSH_PORT -r ./publish/* $SERVER_USERNAME@$SERVER_IP:/var/www/myapp
         expect "Enter passphrase for key 'private_key':"
         send "$SSH_PASSPHRASE\r"
         interact
         EOF
 
         expect << EOF
-        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} "sudo systemctl restart myapp"
+        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "sudo systemctl restart myapp"
         expect "Enter passphrase for key 'private_key':"
         send "$SSH_PASSPHRASE\r"
         interact
