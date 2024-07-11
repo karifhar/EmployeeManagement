@@ -16,8 +16,9 @@ jobs:
     - name: Deploy to VPS
       uses: appleboy/ssh-action@master
       with:
-        host: 157.173.220.60:2217
-        username: thedemit
+        host: ${{ secrets.SERVER_IP }}
+        port: ${{ secrets.SERVER_SSH_PORT }}
+        username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
         passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
         script: |
