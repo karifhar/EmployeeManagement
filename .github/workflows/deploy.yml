@@ -18,12 +18,6 @@ jobs:
       with:
         dotnet-version: '8.0.x'  # Use .NET 8.0 SDK
 
-    - name: Build and Publish
-      run: |
-        dotnet restore
-        dotnet build --configuration Release --no-restore
-        dotnet publish -c Release -o ./publish
-
     - name: Install sshpass and expect
       run: sudo apt-get install sshpass expect
 
@@ -49,13 +43,7 @@ jobs:
 
         # Use expect to handle SSH password and sudo password prompts
         expect << EOF
-        spawn ssh -o StrictHostKeyChecking=no -i private_key -p 
-        $SSH_PORT $SERVER_USERNAME@$SERVER_IP "echo $SERVER_SSH_PASSWORD | 
-        sudo -S su - -c 'mkdir -p ~/MyApp/$GITHUB_REPOSITORY && 
-        ~/MyApp/EmployeeManagement && git pull origin main && 
-        dotnet build && 
-        dotnet publish -c Release -o /var/www/myapp &&
-        systemctl restart myapp.service'"
+        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "echo $SERVER_SSH_PASSWORD | sudo -S su - -c 'mkdir -p ~/MyApp/$GITHUB_REPOSITORY && ~/MyApp/EmployeeManagement && git pull origin main && dotnet build && dotnet publish -c Release -o /var/www/myapp && systemctl restart myapp.service'"
         expect {
           "password:" { send "$SERVER_SSH_PASSWORD\r" }
           "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
