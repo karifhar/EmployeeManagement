@@ -27,7 +27,13 @@ jobs:
     - name: Add SSH Host Key
       run: |
         ssh-keyscan -p ${{ secrets.SERVER_SSH_PORT }} ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-    
+        
+    - name: Build and Publish
+      run: |
+        dotnet restore
+        dotnet build --configuration Release --no-restore
+        dotnet publish -c Release -o ./publish
+        
     - name: Build and Deploy
       env:
         SERVER_IP: ${{ secrets.SERVER_IP }}
@@ -44,6 +50,15 @@ jobs:
         #Build and Deploy
         expect << EOF
         spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "echo $SERVER_SSH_PASSWORD | sudo -S su - -c '~/scripts/deploy.sh'"
+        expect {
+          "password:" { send "$SERVER_SSH_PASSWORD\r" }
+          "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
+        }
+        expect eof
+        EOF
+
+        expect << EOF
+        spawn scp -o StrictHostKeyChecking=no -i private_key -P $SSH_PORT -r ./publish/* $SERVER_USERNAME@$SERVER_IP:/var/www/myapp
         expect {
           "password:" { send "$SERVER_SSH_PASSWORD\r" }
           "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
