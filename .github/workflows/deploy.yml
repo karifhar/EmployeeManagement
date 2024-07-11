@@ -25,4 +25,4 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
-        echo "$SERVER_SSH_PASSPHRASE" | sshpass ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SERVER_USER@$SERVER_IP 'bash -s' < ~/scripts/deploy.sh
+        echo "$SERVER_SSH_PASSPHRASE" | sshpass ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SERVER_USER@$SERVER_IP 'bash -s' < /scripts/deploy.sh
