@@ -59,7 +59,7 @@ jobs:
         EOF
 
         expect << EOF
-        spawn scp -o StrictHostKeyChecking=no -i private_key -P $SSH_PORT -r ./publish/* $SERVER_USERNAME@$SERVER_IP:/var/www/myapp
+        spawn scp -o StrictHostKeyChecking=no -i private_key -P $SSH_PORT -r /publish/* $SERVER_USERNAME@$SERVER_IP:/var/www/myapp
         expect {
           "password:" { send "$SERVER_SSH_PASSWORD\r" }
           "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
