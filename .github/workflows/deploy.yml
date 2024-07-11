@@ -3,7 +3,7 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - main  # Or your default branch
+      - main  # Adjust the branch name as necessary
 
 jobs:
   deploy:
@@ -13,14 +13,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Setup SSH agent
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+        ssh-passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
+
     - name: Deploy to VPS
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SERVER_IP }}
         port: ${{ secrets.SERVER_SSH_PORT }}
         username: ${{ secrets.SERVER_USERNAME }}
-        key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-        passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
         script: |
           cd /MyApp/
           git pull origin main
