@@ -22,7 +22,7 @@ jobs:
       run: dotnet build --configuration Release
 
     - name: Publish
-      run: dotnet publish -c Release -o /var/www/myapp
+      run: dotnet publish -c Release -o ./publish
 
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v0.2.0
@@ -32,7 +32,7 @@ jobs:
         key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
         passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
         local: ./publish  # Path to the published files on GitHub runner
-        remote: /MyApp/EmployeeManagement/  # Remote path where files should be copied
+        remote: /var/www/myapp  # Remote path where files should be copied
 
     - name: Clean up
-      run: rm -rf ./var/www/myapp
+      run: rm -rf ./publish
