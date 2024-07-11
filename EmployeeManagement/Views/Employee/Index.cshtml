@@ -4,7 +4,6 @@
     ViewData["Title"] = "Employee List";
 }
 
-<h1> Test Deploy </h1>
 <div class="container" style="height: 100vh;">
     <div class="row row-cols-1 row-cols-md-2 g-4 p-4">
         @foreach(Employee employee in Model) {
@@ -16,6 +15,7 @@
                         </svg>
                     </div>
                     <div class="card-body">
+                        <h3 class="card-title">@employee.Name</h3>
                         <h3 class="card-title">@employee.Name</h3>
                         <p class="card-text mb-0">@employee.Email</p>
                         <p class="card-text">@employee.Departement</p>
