@@ -24,47 +24,20 @@ jobs:
         dotnet build --configuration Release --no-restore
         dotnet publish -c Release -o ./publish
 
-    - name: Install sshpass and expect
-      run: sudo apt-get install sshpass expect
-
-    - name: Create SSH directory
-      run: mkdir -p ~/.ssh
-
-    - name: Add SSH Host Key
-      run: |
-        ssh-keyscan -p ${{ secrets.SERVER_SSH_PORT }} ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+    - name: Install sshpass
+      run: sudo apt-get install sshpass
 
     - name: Deploy to Server
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-        SSH_PASSPHRASE: ${{ secrets.SERVER_SSH_PASSPHRASE }}
-        SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}
         SERVER_IP: ${{ secrets.SERVER_IP }}
         SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+        SERVER_SSH_PASSWORD: ${{ secrets.SERVER_SSH_PASSWORD }}
+        SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}  # Adjust if your SSH port is different
       run: |
-        # Save the SSH private key to a file
-        echo "$SSH_PRIVATE_KEY" > private_key
-        chmod 600 private_key
+        sshpass -p "$SERVER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "mkdir -p /var/www/myapp"
 
-        # Use expect to handle the SSH passphrase and run commands
-        expect << EOF
-        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "mkdir -p /var/www/myapp"
-        expect "Enter passphrase for key 'private_key':"
-        send "$SSH_PASSPHRASE\r"
-        interact
-        EOF
+        # Copy published files to server
+        sshpass -p "$SERVER_SSH_PASSWORD" scp -o StrictHostKeyChecking=no -P $SSH_PORT -r ./publish/* $SERVER_USERNAME@$SERVER_IP:/var/www/myapp
 
-        expect << EOF
-        spawn scp -o StrictHostKeyChecking=no -i private_key -P $SSH_PORT -r ./publish/* $SERVER_USERNAME@$SERVER_IP:/var/www/myapp
-        expect "Enter passphrase for key 'private_key':"
-        send "$SSH_PASSPHRASE\r"
-        interact
-        EOF
-
-        expect << EOF
-        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "sudo systemctl restart myapp"
-        expect "Enter passphrase for key 'private_key':"
-        send "$SSH_PASSPHRASE\r"
-        interact
-        EOF
-      shell: bash
+        # Restart application (replace with your application specific command)
+        sshpass -p "$SERVER_SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "sudo systemctl restart myapp"
