@@ -27,6 +27,16 @@ jobs:
     - name: Install sshpass
       run: sudo apt-get install sshpass
 
+    - name: Debug SSH Connection
+      env:
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+        SERVER_SSH_PASSWORD: ${{ secrets.SERVER_SSH_PASSWORD }}
+        SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}  # Adjust if your SSH port is different
+      run: |
+        echo "Testing SSH connection to $SERVER_IP as $SERVER_USERNAME"
+        sshpass -p "$SERVER_SSH_PASSWORD" ssh -vvv -o StrictHostKeyChecking=no -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "echo Connected successfully"
+
     - name: Deploy to Server
       env:
         SERVER_IP: ${{ secrets.SERVER_IP }}
