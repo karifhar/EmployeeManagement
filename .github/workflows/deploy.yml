@@ -27,8 +27,8 @@ jobs:
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2
       with:
-        server: ${{ secrets.SERVER_IP }}
-        username: ${{ secrets.SERVER_USERNAME }}
-        ssh_private_key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-        local_path: ./publish/
-        remote_path: /var/www/myapp  # Adjust to your deployment path
+        REMOTE_HOST: ${{ secrets.SERVER_IP }}
+        REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+        LOCAL_PATH: ./publish/
+        REMOTE_PATH: /var/www/myapp  # Adjust to your deployment path
