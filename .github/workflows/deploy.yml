@@ -19,6 +19,7 @@ jobs:
         host: 157.173.220.60
         username: thedemit
         key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+        passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
         script: |
           cd /MyApp/
           git pull origin main
