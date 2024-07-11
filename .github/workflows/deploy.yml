@@ -24,18 +24,20 @@ jobs:
         dotnet build --configuration Release --no-restore
         dotnet publish -c Release -o ./publish
 
+    - name: Install sshpass
+      run: sudo apt-get install sshpass
+
     - name: Deploy to Server
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
         SSH_PASSPHRASE: ${{ secrets.SERVER_SSH_PASSPHRASE }}
       run: |
+        # Save the SSH private key to a file
         echo "$SSH_PRIVATE_KEY" > private_key
         chmod 600 private_key
-        # Start the ssh-agent and add the private key
-        eval $(ssh-agent -s)
-        echo "$SSH_PASSPHRASE" | ssh-add private_key
-        # Securely copy the published files to the server
-        scp -o StrictHostKeyChecking=no -i private_key -r ./publish/* ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:/var/www/myapp
-        # Restart the application on the server
-        ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} 'sudo systemctl restart myapp'
+
+        # Use sshpass to handle the SSH passphrase
+        sshpass -p "$SSH_PASSPHRASE" ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} 'mkdir -p /var/www/myapp'
+        sshpass -p "$SSH_PASSPHRASE" scp -o StrictHostKeyChecking=no -i private_key -r ./publish/* ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:/var/www/myapp
+        sshpass -p "$SSH_PASSPHRASE" ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} 'sudo systemctl restart myapp'
       shell: bash
