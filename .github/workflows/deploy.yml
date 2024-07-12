@@ -27,8 +27,8 @@ jobs:
     - name: Add SSH Host Key
       run: |
         ssh-keyscan -p ${{ secrets.SERVER_SSH_PORT }} ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-
-    - name: Deploy to Server with sudo access
+        
+    - name: Build and Deploy
       env:
         SERVER_IP: ${{ secrets.SERVER_IP }}
         SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
@@ -36,14 +36,15 @@ jobs:
         SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}  # Adjust if your SSH port is different
         SSH_PASSPHRASE: ${{ secrets.SERVER_SSH_PASSPHRASE }}
         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+        PROJECT_NAME: "EmployeeManagement"
       run: |
         # Save SSH private key to a file and set permissions
         echo "$SSH_PRIVATE_KEY" > private_key
         chmod 600 private_key
 
-        # Use expect to handle SSH password and sudo password prompts
+        #Build and Deploy
         expect << EOF
-        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "echo $SERVER_SSH_PASSWORD | sudo -S su - -c 'mkdir -p ~/MyApp/$GITHUB_REPOSITORY && cd ~/MyApp/$GITHUB_REPOSITORY && git pull origin main && dotnet build && dotnet publish -c Release -o /var/www/myapp && systemctl restart myapp.service'"
+        spawn ssh -o StrictHostKeyChecking=no -i private_key -p $SSH_PORT $SERVER_USERNAME@$SERVER_IP "echo $SERVER_SSH_PASSWORD | sudo -S su - -c '~/scripts/deploy.sh'"
         expect {
           "password:" { send "$SERVER_SSH_PASSWORD\r" }
           "Enter passphrase for key 'private_key':" { send "$SSH_PASSPHRASE\r" }
