@@ -33,6 +33,7 @@ jobs:
         ssh -p $SERVER_SSH_PORT $SERVER_USERNAME@$SERVER_IP 'sudo systemctl restart EmployeeApp.service'
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+        SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
         SERVER_IP: ${{ secrets.SERVER_IP }}
         SERVER_SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}
         SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
