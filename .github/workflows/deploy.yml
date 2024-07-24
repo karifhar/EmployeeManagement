@@ -28,23 +28,11 @@ jobs:
       run: dotnet publish --configuration Release --no-build --output ./output
 
     - name: Deploy to server
+      run: |
+        scp -P $SERVER_SSH_PORT -r ./output $SERVER_USERNAME@$SERVER_IP:/var/www/EmployeeApp
+        ssh -p $SERVER_SSH_PORT $SERVER_USERNAME@$SERVER_IP 'sudo systemctl restart EmployeeApp.service'
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
         SERVER_IP: ${{ secrets.SERVER_IP }}
         SERVER_SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}
         SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
-      run: |
-        # Install SSH key
-        echo "$SSH_PRIVATE_KEY" > private_key
-        chmod 600 private_key
-
-        # Copy files to the server
-        scp -i private_key -o StrictHostKeyChecking=no -P $SERVER_SSH_PORT -r ./output $SERVER_USERNAME@$SERVER_IP:/var/www/EmployeeApp
-
-        # Restart the application service on the server
-        ssh -i private_key -o StrictHostKeyChecking=no -p $SERVER_SSH_PORT $SERVER_USERNAME@$SERVER_IP 'sudo systemctl restart EmployeeApp.service'
-
-        # Remove the private key
-        rm private_key
-
-        shell: /usr/bin/bash -e {0}
