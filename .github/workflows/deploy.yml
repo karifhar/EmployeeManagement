@@ -26,7 +26,7 @@ jobs:
 
     - name: Publish
       run: dotnet publish --configuration Release --no-build --output ./output
-
+       
     - name: Deploy to server
       run: |
         scp -P $SERVER_SSH_PORT -r ./output $SERVER_USERNAME@$SERVER_IP:/var/www/EmployeeApp
