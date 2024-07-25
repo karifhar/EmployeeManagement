@@ -28,9 +28,6 @@ jobs:
     - name: Publish
       run: dotnet publish --configuration Release --no-build --output TheBestown/EmployeeManagement/output
 
-    - name: Publish the package to GPR
-      run: dotnet nuget push TheBestown/EmployeeManagement/bin/Release/*.nupkg
-        
     - name: Deploy to Server
       uses: appleboy/ssh-action@master
       with:
