@@ -26,8 +26,11 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Publish
-      run: dotnet publish --configuration Release --no-build --output ./output
+      run: dotnet publish --configuration Release --no-build --output TheBestown/EmployeeManagement/output
 
+    - name: Publish the package to GPR
+      run: dotnet nuget push TheBestown/EmployeeManagement/bin/Release/*.nupkg
+        
     - name: Deploy to Server
       uses: appleboy/ssh-action@master
       with:
@@ -40,6 +43,6 @@ jobs:
           # Create the target directory with sudo and -S option for password input
           echo ${{ secrets.SERVER_PASSWORD }} | sudo -S mkdir -p /var/www/EmployeeApp
           # Copy the published files with sudo
-          echo ${{ secrets.SERVER_PASSWORD }} | sudo -S cp -r ./output/* /var/www/EmployeeApp
+          echo ${{ secrets.SERVER_PASSWORD }} | sudo -S cp -r TheBestown/EmployeeManagement/output/* /var/www/EmployeeApp
           # Restart the application or web server
           echo ${{ secrets.SERVER_PASSWORD }} | sudo -S systemctl restart EmployeeApp.service
