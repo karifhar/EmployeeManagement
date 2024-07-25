@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    name: Test-Deploy
 
     steps:
     - name: Checkout code
