@@ -36,9 +36,9 @@ jobs:
         port: ${{ secrets.SERVER_SSH_PORT }}
         passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
         script: |
-          # Make sure the target directory exists
-          mkdir -p /var/www/EmployeeApp
-          # Copy the published files
-          scp -r ./output/* user@${{ secrets.SERVER_HOST }}:/var/www/EmployeeApp
-          # Optionally, restart your application or web server
-          sudo systemctl restart EmployeeApp.service
+          # Create the target directory with sudo and -S option for password input
+          echo ${{ secrets.SUDO_PASSWORD }} | sudo -S mkdir -p /var/www/EmployeeApp
+          # Copy the published files with sudo
+          echo ${{ secrets.SUDO_PASSWORD }} | sudo -S cp -r ./output/* /var/www/EmployeeApp
+          # Restart the application or web server
+          echo ${{ secrets.SUDO_PASSWORD }} | sudo -S systemctl restart EmployeeApp.service
