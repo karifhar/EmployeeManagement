@@ -27,25 +27,18 @@ jobs:
     - name: Publish
       run: dotnet publish --configuration Release --no-build --output ./output
 
-    - name: Set up SSH key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-        chmod 644 ~/.ssh/known_hosts
-        eval $(ssh-agent -s)
-        echo "${{ secrets.SERVER_SSH_PASSPHRASE }}" | ssh-add ~/.ssh/id_rsa
-      env:
-        SSH_PASSPHRASE: ${{ secrets.SERVER_SSH_PASSPHRASE }}
-        
-    - name: Deploy to server
-      run: |
-        scp -P $SERVER_SSH_PORT -r ./output $SERVER_USERNAME@$SERVER_IP:/var/www/EmployeeApp
-        ssh -p $SERVER_SSH_PORT $SERVER_USERNAME@$SERVER_IP 'sudo systemctl restart EmployeeApp.service'
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-        SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-        SERVER_IP: ${{ secrets.SERVER_IP }}
-        SERVER_SSH_PORT: ${{ secrets.SERVER_SSH_PORT }}
-        SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+    - name: Deploy to Server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SERVER_SSH_PORT }}
+        passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
+        script: |
+          # Make sure the target directory exists
+          mkdir -p /var/www/EmployeeApp
+          # Copy the published files
+          scp -r ./output/* user@${{ secrets.SERVER_HOST }}:/var/www/EmployeeApp
+          # Optionally, restart your application or web server
+          sudo systemctl restart EmployeeApp.service
