@@ -4,14 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using EmployeeManagement.Contracts.Enums;
 
-namespace EmployeeManagement.Models
+namespace EmployeeManagement.Contracts.Request
 {
-    public class Employee
+    public class EmployeeInput
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public DepartementEnum Departement { get; set; }
+        public string Departement { get; set; }
         public GenderEnum Gender { get; set; }
     }
 }

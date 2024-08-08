@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using EmployeeManagement.Models;
 using EmployeeManagement.Services.EmployeeRepo;
+using EmployeeManagement.Contracts.Request;
 
 namespace EmployeeManagement.Controllers;
 
@@ -22,6 +23,7 @@ public class EmployeeController : Controller
         return View(model);
     }
 
+
     public IActionResult Details(int id)
     {
         Employee employee = _employeeService.GetEmployeeById(id);
@@ -30,6 +32,21 @@ public class EmployeeController : Controller
             return BadRequest();
         
         return View(employee);
+    }
+
+    [HttpGet]
+    public IActionResult Create() {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult Create(Employee input) 
+    {
+        if(input == null || string.IsNullOrWhiteSpace(input.Name) || string.IsNullOrWhiteSpace(input.Email))
+            return View();
+
+        var newEmployee = _employeeService.CreateEmployee(input);
+        return RedirectToAction("details", new {id = newEmployee.Id});
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
