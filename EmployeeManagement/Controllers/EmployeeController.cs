@@ -42,7 +42,7 @@ public class EmployeeController : Controller
     [HttpPost]
     public IActionResult Create(Employee input) 
     {
-        if(input == null || string.IsNullOrWhiteSpace(input.Name) || string.IsNullOrWhiteSpace(input.Email))
+        if(input == null || string.IsNullOrWhiteSpace(input.Name) || string.IsNullOrWhiteSpace(input.Email) || input.Name.Length > 10)
             return View();
 
         var newEmployee = _employeeService.CreateEmployee(input);
