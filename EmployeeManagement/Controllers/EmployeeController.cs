@@ -46,7 +46,8 @@ public class EmployeeController : Controller
             return View();
 
         var newEmployee = _employeeService.CreateEmployee(input);
-        return RedirectToAction("details", new {id = newEmployee.Id});
+        return View();
+        //return RedirectToAction("details", new {id = newEmployee.Id});
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

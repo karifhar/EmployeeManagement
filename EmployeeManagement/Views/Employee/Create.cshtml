@@ -1,4 +1,6 @@
+@using EmployeeManagement.Services.EmployeeRepo
 @model Employee
+@inject IEmployeeService _employeeService
 
 @{
     ViewBag.Title = "Create Employee";
@@ -45,6 +47,11 @@
         </div>
         <div class="card-body align-self-end">
             <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-2">
+                Total Employee Count: @_employeeService.GetEmployeeList().Count()
+            </div>
         </div>
     </form>
 </div>
