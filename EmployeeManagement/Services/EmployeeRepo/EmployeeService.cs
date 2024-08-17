@@ -34,13 +34,23 @@ namespace EmployeeManagement.Services.EmployeeRepo
             return newEmployee;
         }
 
+        public void Delete(int id)
+        {
+            Employee employee = MockEmployee.FirstOrDefault(e => e.Id == id);
+
+            if (employee == null)
+             throw new ArgumentException("Employee ID not Found");
+            
+            MockEmployee.Remove(employee);  
+        }
+
         public Employee GetEmployeeById(int id)
         {
             Employee employee = MockEmployee.FirstOrDefault(x => x.Id == id);
 
             if(employee == null)
                 throw new Exception();
-
+            
             return employee;
         }
         public List<Employee> GetEmployeeList()
@@ -48,5 +58,22 @@ namespace EmployeeManagement.Services.EmployeeRepo
             return MockEmployee;
         }
 
+        public Employee Update(Employee input)
+        {
+            Employee employee = MockEmployee.FirstOrDefault(e => e.Id == input.Id);
+
+            if (employee == null)
+             throw new ArgumentException("Employee ID not Found");
+            
+            int index = MockEmployee.IndexOf(employee);
+
+            MockEmployee[index].Name = input.Name;
+            MockEmployee[index].Email = input.Email;
+            MockEmployee[index].Gender = input.Gender;
+            MockEmployee[index].Departement = input.Departement;
+
+            return MockEmployee[index];
+
+        }
     }
 }
