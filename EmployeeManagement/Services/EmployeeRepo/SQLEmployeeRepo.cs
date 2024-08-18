@@ -45,7 +45,7 @@ namespace EmployeeManagement.Services.EmployeeRepo
         {
             Employee employee = _context.Employees.Find(id);
 
-            return employee;
+            return employee ?? throw new Exception("Employee ID is not found");
         }
 
         public List<Employee> GetEmployeeList()

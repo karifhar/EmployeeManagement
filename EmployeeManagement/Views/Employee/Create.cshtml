@@ -1,6 +1,4 @@
-@using EmployeeManagement.Services.EmployeeRepo
-@model Employee
-@inject IEmployeeService _employeeService
+@model EmployeeCreateViewModel
 
 @{
     ViewBag.Title = "Create Employee";
@@ -8,7 +6,7 @@
 
 
 <div class="container p-5">
-    <form class="card p-3" asp-controller="employee" asp-action="Create" method="post">
+    <form class="card p-3" enctype="multipart/form-data" asp-controller="employee" asp-action="Create" method="post">
         <h3 class="text-center card-title mb-3">Employee Form</h3>
         @* <div class="text-danger" asp-validation-summary="All"></div> *@
         <div class="row mb-3">
@@ -34,7 +32,9 @@
                 <label class="col-form-label" asp-for="Gender">Sex</label>
             </div>
             <div class="col-sm-10">
-                <select class="form-select col-sm-10" asp-for="Gender" asp-items="Html.GetEnumSelectList<GenderEnum>()"></select>
+                <select class="form-select col-sm-10" asp-for="Gender" asp-items="Html.GetEnumSelectList<GenderEnum>()">
+                    <option value="">Please Select</option>
+                </select>
             </div>
         </div>
         <div class="row mb-3">
@@ -42,7 +42,9 @@
                 <label class="col-form-label" asp-for="Departement">Departement</label>
             </div>
             <div class="col-sm-10">
-                <select class="form-select" asp-for="Departement" asp-items="Html.GetEnumSelectList<DepartementEnum>()"></select>
+                <select class="form-select" asp-for="Departement" asp-items="Html.GetEnumSelectList<DepartementEnum>()">
+                    <option value="">Please Select</option>
+                </select>
             </div>
         </div>
         <div class="row mb-3">
@@ -56,5 +58,15 @@
         <div class="card-body align-self-end">
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
+
+        @section Scripts {
+            <script>
+                $(document).ready(function () {
+                    $("#PhotoPath").on("change", function () {
+                        let fileName = $(this).val().split("\\").pop();
+                    })
+                });
+            </script>
+        }
     </form>
 </div>

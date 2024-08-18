@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Employee List";
+    
 }
 
 <div class="container" style="height: 100vh;">
@@ -10,18 +11,27 @@
             <div class="col">
                 <div class="card">
                     <div class="text-center pt-3" style="background-color: grey;">
-                        <svg class="card-img-top" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512 " style="width: 5rem;">
-                        <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
-                        </svg>
+                        @if (string.IsNullOrWhiteSpace(employee.PhotoPath)) 
+                        {
+                            <svg class="card-img-top" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512 " style="width: 5rem;">
+                            <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
+                            </svg>
+                        } 
+                        else 
+                        {
+                            var photoPath = "~/img/" + (employee.PhotoPath ?? "");
+                            <img class="card-img-top" src="@photoPath" asp-append-version="true" alt="avatar" style="width: 5rem;"/>
+                        }
+                        
                     </div>
                     <div class="card-body">
                         <h3 class="card-title">@employee.Name</h3>
                         <p class="card-text mb-0">@employee.Email</p>
-                        <p class="card-text">@employee.Departement</p>
+                        <p class="card-text">@employee.Departement.</p>
                     </div>
                     <div class="card-footer text-center">
                         <form asp-action="Delete" asp-route-id="@employee.Id" method="post">
-                            <a asp-controller="employee" asp-action="details" asp-route-id="@employee.Id" class="btn btn-primary">View</a>
+                            <a asp-controller="employee" asp-action="details" asp-route-id="@employee.Id" class="btn btn-primary m-1">View</a>
                             <a href="#" class="btn btn-primary m-1">Edit</a>
                             <button type="submit" class="btn btn-danger m-1">Delete</button>
                         </form>

@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Employee Detail";
+    var photoPath = "~/img/" + (@Model.PhotoPath ?? "");
 }
 
 <div class="container d-flex" style="height: 100vh;">
@@ -9,14 +10,21 @@
         <div class="card w-50 align-self-center">
             <div class="row row-cols-1">
                 <div class="col col-md-4 align-content-center text-center">
+                    @if (string.IsNullOrWhiteSpace(Model.PhotoPath)) 
+                    {
                         @if (Model.Gender == GenderEnum.Male)
                         {
-                            <img class="card-img w-50 m-3" src="~/img/undraw_male_avatar_g98d.min.svg" asp-append-version="true" alt="">
+                            <img class="card-img w-50 m-3" src="~/img/undraw_male_avatar_g98d.min.svg" asp-append-version="true" alt="no-image-male">
                         }
                         else
                         {
-                            <img class="card-img w-75 m-3" src="~/img/undraw_Female_avatar_efig.png" asp-append-version="true" alt="">
-                        }
+                            <img class="card-img w-75 m-3" src="~/img/undraw_Female_avatar_efig.png" asp-append-version="true" alt="no-image-female">
+                        } 
+                    } 
+                    else 
+                    {
+                        <img class="card-img w-50 m-3" src="@photoPath" asp-append-version="true" alt="avatar">
+                    }
                 </div>
                 <div class="col col-md-8">
                     <div class="card-body">
@@ -27,9 +35,11 @@
                         <p class="card-text">@Model.Departement</p>
                     </div>
                     <div class="card-footer d-flex justify-content-center flex-wrap">
+                        <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
                             <a asp-controller="employee" asp-action="index" class="btn btn-primary m-1">Back</a>  
                             <a href="#" class="btn btn-primary m-1">Edit</a>
-                            <a asp-controller="employee" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger m-1" method="post">Delete</a>
+                            <button type="submit" class="btn btn-danger m-1" method="post">Delete</button>
+                        </form>
                     </div>
                 </div>
             </div>
