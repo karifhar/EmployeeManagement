@@ -13,5 +13,6 @@ namespace EmployeeManagement.Models
         public string Email { get; set; }
         public DepartementEnum Departement { get; set; }
         public GenderEnum Gender { get; set; }
+        public string PhotoPath { get; set; }
     }
 }

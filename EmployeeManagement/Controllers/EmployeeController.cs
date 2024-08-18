@@ -23,7 +23,6 @@ public class EmployeeController : Controller
         return View(model);
     }
 
-
     public IActionResult Details(int id)
     {
         Employee employee = _employeeService.GetEmployeeById(id);
@@ -46,8 +45,20 @@ public class EmployeeController : Controller
             return View();
 
         var newEmployee = _employeeService.CreateEmployee(input);
-        return View();
-        //return RedirectToAction("details", new {id = newEmployee.Id});
+
+        return RedirectToAction("details", new {id = newEmployee.Id});
+    }
+
+    [HttpPost]
+    public IActionResult Delete(int id) 
+    {
+        Debug.WriteLine("inside");
+        Employee employee = _employeeService.GetEmployeeById(id);
+
+        if (employee != null)
+            _employeeService.Delete(id);
+        
+        return RedirectToAction("index");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

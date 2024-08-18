@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EmployeeManagement.Models.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagement.Models
@@ -13,5 +14,13 @@ namespace EmployeeManagement.Models
         }
 
         public DbSet<Employee> Employees { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Seed();
+            modelBuilder.Entity<Employee>().Property(e => e.Departement).HasConversion<string>();
+            modelBuilder.Entity<Employee>().Property(e => e.Gender).HasConversion<string>();
+            modelBuilder.Entity<Employee>().Property(e => e.PhotoPath).IsRequired(false).HasDefaultValue("");
+        }
     }
 }

@@ -17,9 +17,17 @@ namespace EmployeeManagement.Services.EmployeeRepo
 
         public Employee CreateEmployee(Employee input)
         {
-            _context.Employees.Add(input);
+            Employee newEmployee = new Employee() {
+                Name = input.Name,
+                Email = input.Email,
+                Gender = input.Gender,
+                Departement = input.Departement,
+                PhotoPath = string.IsNullOrWhiteSpace(input.PhotoPath) ? "" : input.PhotoPath,
+            };
+
+            _context.Employees.Add(newEmployee);
             _context.SaveChanges();
-            return input;
+            return newEmployee;
         }
 
         public void Delete(int id)
@@ -35,7 +43,9 @@ namespace EmployeeManagement.Services.EmployeeRepo
 
         public Employee GetEmployeeById(int id)
         {
-            return _context.Employees.Find(id) ?? throw new ArgumentException("Employee ID is not found");
+            Employee employee = _context.Employees.Find(id);
+
+            return employee;
         }
 
         public List<Employee> GetEmployeeList()
