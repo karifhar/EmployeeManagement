@@ -10,19 +10,18 @@
         @foreach(Employee employee in Model) {
             <div class="col">
                 <div class="card">
-                    <div class="text-center pt-3" style="background-color: grey;">
+                    <div class="text-center pt-3 item" style="background-color: grey;">
                         @if (string.IsNullOrWhiteSpace(employee.PhotoPath)) 
                         {
-                            <svg class="card-img-top" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512 " style="width: 5rem;">
+                            <svg class="card-img-top" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512 " style="width: 5rem; height: 80px;;">
                             <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
                             </svg>
                         } 
                         else 
                         {
                             var photoPath = "~/img/" + (employee.PhotoPath ?? "");
-                            <img class="card-img-top" src="@photoPath" asp-append-version="true" alt="avatar" style="width: 5rem;"/>
+                            <img class="card-img-top" src="@photoPath" asp-append-version="true" alt="avatar" style="width: 5rem; height: 80px;"/>
                         }
-                        
                     </div>
                     <div class="card-body">
                         <h3 class="card-title">@employee.Name</h3>
@@ -40,6 +39,18 @@
             </div>
         }
     </div>
-        
+    @section Scripts {
+    <script>
+       $(document).ready(() =>{
+            let item = $('.item');
+            item.each(function() {
+               if($(this).find("img").length > 0) {
+                    $(this).css("background-color", "white");
+                } else {
+                    $(this).css("background-color", $(this).css("background-color"));
+                }
+            });
+       }); 
+    </script>
+    }
 </div>
-
