@@ -29,9 +29,9 @@
                         <p class="card-text">@employee.Departement.</p>
                     </div>
                     <div class="card-footer text-center">
-                        <form asp-action="Delete" asp-route-id="@employee.Id" method="post">
+                        <form asp-controller="Employee" asp-action="Delete" asp-route-id="@employee.Id" method="post">
                             <a asp-controller="employee" asp-action="details" asp-route-id="@employee.Id" class="btn btn-primary m-1">View</a>
-                            <a href="#" class="btn btn-primary m-1">Edit</a>
+                            <a asp-controller="employee" asp-action="edit" asp-route-id="@employee.Id" class="btn btn-primary m-1">Edit</a>
                             <button type="submit" class="btn btn-danger m-1">Delete</button>
                         </form>
                     </div>

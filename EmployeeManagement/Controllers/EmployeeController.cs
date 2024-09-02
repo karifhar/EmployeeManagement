@@ -85,6 +85,22 @@ public class EmployeeController : Controller
         return RedirectToAction("index");
     }
 
+    [HttpGet]
+    public IActionResult Edit(int id) 
+    {
+        Employee employee = _employeeService.GetEmployeeById(id);
+        return View(employee);
+
+    }
+
+    [HttpPost]
+    public IActionResult Edit(Employee input) 
+    {
+        Employee employee = _employeeService.Update(input);
+        return View(employee);
+
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
