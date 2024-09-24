@@ -89,16 +89,32 @@ public class EmployeeController : Controller
     public IActionResult Edit(int id) 
     {
         Employee employee = _employeeService.GetEmployeeById(id);
-        return View(employee);
+
+        EmployeeEditViewModel model = new EmployeeEditViewModel() 
+        {
+            Id = employee.Id,
+            Name = employee.Name,
+            Departement = employee.Departement,
+            Email = employee.Email,
+            Gender = employee.Gender,
+            ExistingPhotoPath = employee.PhotoPath
+        };
+
+        return View(model);
 
     }
 
     [HttpPost]
-    public IActionResult Edit(Employee input) 
+    public IActionResult Edit(EmployeeEditViewModel input) 
     {
-        Employee employee = _employeeService.Update(input);
-        return View(employee);
+        Employee employee = _employeeService.GetEmployeeById(input.Id);
+        employee.Name = input.Name;
+        employee.Departement = employee.Departement;
+        employee.Email = employee.Email;
+        employee.Gender = employee.Gender;
 
+        _employeeService.Update(employee);
+        return RedirectToAction("details", new {id = employee.Id});
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
