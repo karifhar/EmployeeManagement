@@ -30,12 +30,17 @@ public class EmployeeController : Controller
 
     public IActionResult Details(int id)
     {
-        Employee employee = _employeeService.GetEmployeeById(id);
-
-        if(employee == null)
-            return BadRequest();
+        try
+        {
+            Employee employee = _employeeService.GetEmployeeById(id);
+            return View(employee);
+        }
+        catch (Exception e)
+        {
+            string errMessage = e.Message;
+            return View("ErrorNotFoundPage", errMessage);
+        }
         
-        return View(employee);
     }
 
     [HttpGet]
@@ -76,7 +81,6 @@ public class EmployeeController : Controller
     [HttpPost]
     public IActionResult Delete(int id) 
     {
-        Debug.WriteLine("inside");
         Employee employee = _employeeService.GetEmployeeById(id);
 
         if (employee != null)
@@ -88,20 +92,27 @@ public class EmployeeController : Controller
     [HttpGet]
     public IActionResult Edit(int id) 
     {
-        Employee employee = _employeeService.GetEmployeeById(id);
-
-        EmployeeEditViewModel model = new EmployeeEditViewModel() 
+        try
         {
-            Id = employee.Id,
-            Name = employee.Name,
-            Departement = employee.Departement,
-            Email = employee.Email,
-            Gender = employee.Gender,
-            ExistingPhotoPath = employee.PhotoPath
-        };
+            Employee employee = _employeeService.GetEmployeeById(id);
 
-        return View(model);
-
+            EmployeeEditViewModel model = new EmployeeEditViewModel() 
+            {
+                Id = employee.Id,
+                Name = employee.Name,
+                Departement = employee.Departement,
+                Email = employee.Email,
+                Gender = employee.Gender,
+                ExistingPhotoPath = employee.PhotoPath
+            };
+            return View(model);
+        }
+        catch (Exception e)
+        {
+            string errMessage = e.Message;
+            return View("ErrorNotFoundPage", errMessage);
+        }
+        
     }
 
     [HttpPost]
