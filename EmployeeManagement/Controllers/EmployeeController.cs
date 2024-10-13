@@ -49,15 +49,9 @@ public class EmployeeController : Controller
         if(input == null || string.IsNullOrWhiteSpace(input.Name) || string.IsNullOrWhiteSpace(input.Email) || input.Name.Length > 10)
             return View();
             
-        string uniqueFileName = string.Empty;
+        string uniqueFileName = ProceedUploadPhotoFile(input);
 
-        if (input.PhotoPath != null) 
-        {
-            string uploadFolder = Path.Combine(_hostingEnv.WebRootPath, "img");
-            uniqueFileName = Guid.NewGuid().ToString() + input.PhotoPath.FileName;
-            string filePath = Path.Combine(uploadFolder, uniqueFileName);
-            input.PhotoPath.CopyTo(new FileStream(filePath, FileMode.Create));
-        }
+        
         
         Employee newEmployeeData = new Employee() 
         {
@@ -101,20 +95,35 @@ public class EmployeeController : Controller
         };
 
         return View(model);
-
     }
 
     [HttpPost]
-    public IActionResult Edit(EmployeeEditViewModel input) 
+    public IActionResult Edit(EmployeeEditViewModel input)
     {
         Employee employee = _employeeService.GetEmployeeById(input.Id);
         employee.Name = input.Name;
         employee.Departement = employee.Departement;
         employee.Email = employee.Email;
         employee.Gender = employee.Gender;
+        employee.PhotoPath = ProceedUploadPhotoFile(input);
 
         _employeeService.Update(employee);
-        return RedirectToAction("details", new {id = employee.Id});
+        return RedirectToAction("details", new { id = employee.Id });
+    }
+
+    private string ProceedUploadPhotoFile(EmployeeCreateViewModel input)
+    {
+        string uniqueFileName = string.Empty;
+
+        if (input.PhotoPath != null)
+        {
+            string uploadFolder = Path.Combine(_hostingEnv.WebRootPath, "img");
+            uniqueFileName = Guid.NewGuid().ToString() + input.PhotoPath.FileName;
+            string filePath = Path.Combine(uploadFolder, uniqueFileName);
+            input.PhotoPath.CopyTo(new FileStream(filePath, FileMode.Create));
+        }
+
+        return uniqueFileName;
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Edit Employee";
+    var photoPath = "~/img/" + (@Model.ExistingPhotoPath ?? "");
 }
 
 <div class="container p-5">
@@ -54,6 +55,25 @@
             </div>
             <div class="col-sm-10">
                 <input class="form-control" type="file" asp-for="PhotoPath" placeholder="Change a Photo"/>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="text-center w-50 m-auto">
+                @if (!string.IsNullOrWhiteSpace(@Model.ExistingPhotoPath)) 
+                {
+                    <img class="card-img w-50 m-3" src="@photoPath" asp-append-version="true" alt="avatar">
+                } 
+                else 
+                {
+                    @if (@Model.Gender == GenderEnum.Male)
+                    {
+                        <img class="card-img w-50 m-3" src="~/img/undraw_male_avatar_g98d.min.svg" asp-append-version="true" alt="no-image-male">
+                    }
+                    else
+                    {
+                        <img class="card-img w-75 m-3" src="~/img/undraw_Female_avatar_efig.png" asp-append-version="true" alt="no-image-female">
+                    } 
+                }
             </div>
         </div>
         <div class="card-body align-self-end">
