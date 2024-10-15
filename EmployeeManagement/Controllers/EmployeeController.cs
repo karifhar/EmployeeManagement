@@ -30,17 +30,8 @@ public class EmployeeController : Controller
 
     public IActionResult Details(int id)
     {
-        try
-        {
-            Employee employee = _employeeService.GetEmployeeById(id);
-            return View(employee);
-        }
-        catch (Exception e)
-        {
-            string errMessage = e.Message;
-            return View("ErrorNotFoundPage", errMessage);
-        }
-        
+        Employee employee = _employeeService.GetEmployeeById(id);
+        return View(employee);
     }
 
     [HttpGet]
@@ -56,8 +47,6 @@ public class EmployeeController : Controller
             
         string uniqueFileName = ProceedUploadPhotoFile(input);
 
-        
-        
         Employee newEmployeeData = new Employee() 
         {
             Name = input.Name,
@@ -86,26 +75,18 @@ public class EmployeeController : Controller
     [HttpGet]
     public IActionResult Edit(int id) 
     {
-        try
-        {
-            Employee employee = _employeeService.GetEmployeeById(id);
+        Employee employee = _employeeService.GetEmployeeById(id);
 
-            EmployeeEditViewModel model = new EmployeeEditViewModel() 
-            {
-                Id = employee.Id,
-                Name = employee.Name,
-                Departement = employee.Departement,
-                Email = employee.Email,
-                Gender = employee.Gender,
-                ExistingPhotoPath = employee.PhotoPath
-            };
-            return View(model);
-        }
-        catch (Exception e)
+        EmployeeEditViewModel model = new EmployeeEditViewModel() 
         {
-            string errMessage = e.Message;
-            return View("ErrorNotFoundPage", errMessage);
-        }
+            Id = employee.Id,
+            Name = employee.Name,
+            Departement = employee.Departement,
+            Email = employee.Email,
+            Gender = employee.Gender,
+            ExistingPhotoPath = employee.PhotoPath
+        };
+        return View(model);
         
     }
 
@@ -136,11 +117,5 @@ public class EmployeeController : Controller
         }
 
         return uniqueFileName;
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

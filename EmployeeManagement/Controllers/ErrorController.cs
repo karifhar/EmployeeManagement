@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace EmployeeManagement.Controllers
 {
-    [Route("[controller]")]
+   [Route("[controller]")]
     public class ErrorController : Controller
     {
         private readonly ILogger<ErrorController> _logger;
@@ -16,6 +18,19 @@ namespace EmployeeManagement.Controllers
         public ErrorController(ILogger<ErrorController> logger)
         {
             _logger = logger;
+        }
+
+
+        [AllowAnonymous]
+        public IActionResult Error() 
+        {
+            IExceptionHandlerPathFeature exceptionDetail = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+
+            ViewBag.ExceptionPath = exceptionDetail!.Path;
+            ViewBag.ExceptionMessage =  exceptionDetail.Error.Message;
+            ViewBag.StackTrace = exceptionDetail.Error.StackTrace;
+
+            return View("Error");
         }
 
         [Route("{statusCode}")]
