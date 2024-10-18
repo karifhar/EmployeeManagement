@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EmployeeManagement.Controllers
 {
-   [Route("[controller]")]
+    [Route("[controller]")]
     public class ErrorController : Controller
     {
         private readonly ILogger<ErrorController> _logger;
@@ -20,9 +20,8 @@ namespace EmployeeManagement.Controllers
             _logger = logger;
         }
 
-
-        [AllowAnonymous]
-        public IActionResult Error() 
+        [HttpGet]
+        public IActionResult Index() 
         {
             IExceptionHandlerPathFeature exceptionDetail = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
 
@@ -33,7 +32,7 @@ namespace EmployeeManagement.Controllers
             return View("Error");
         }
 
-        [Route("{statusCode}")]
+        [HttpGet("{statusCode}")]
         public IActionResult HttpStatusCodeHandler(int statusCode)
         {
             switch (statusCode)

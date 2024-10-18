@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using EmployeeManagement.Models;
 using EmployeeManagement.Services.EmployeeRepo;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextPool<AppDbContext>(opt => 
     opt.UseSqlServer(builder.Configuration.GetConnectionString("EmployeeDbConnection")));
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
 // Add services to the container.
 builder.Services.AddMvc();
 builder.Services.AddScoped<IEmployeeService, SQLEmployeeRepo>();
