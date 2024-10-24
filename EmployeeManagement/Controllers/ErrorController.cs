@@ -40,6 +40,9 @@ namespace EmployeeManagement.Controllers
                 case 404:
                     ViewBag.ErrorMessage =  "Sorry, The url could not be found";
                     break;
+                case 405:
+                    ViewBag.ErrorMessage =  "Sorry, you are fucked up";
+                    break;
                 default:
                     break;
             }

@@ -1,9 +1,36 @@
+@model RegisterViewModel
+
 <div class="container p-5">
-    <form class="card p-3 w-50 m-auto" asp-controller="Account" asp-action="register" method="post">
-        <h3 class="text-center card-title mb-3">Register Account</h3>
-        <div class="row">
-            <label class="form-label" for="email">Email: </label>
-            <input class="form-control" id="email" name>
-        </div>
-    </form>
+    <div class="row">
+        <form class="card p-5 m-auto col-12 col-md-6" asp-controller="Account" asp-action="register" method="post">
+            <div class="card-body">
+                <h3 class="text-center card-title mb-3">Register Account</h3>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label p-0" for="email">Email: </label>
+                        <input type="email" class="form-control" id="email" name="Email" required>
+                        @* <span class="text-danger" asp-validation-for="Email"></span> *@
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label p-0" for="password">Password: </label>
+                        <input type="password" class="form-control" id="password" name="Password" required>
+                        @* <span class="text-danger" asp-validation-for="Password"></span> *@
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label p-0" for="confirmPassword">Confirm Password: </label>
+                        <input type="password" class="form-control" id="confirmPassword" name="ConfirmPassword" required>
+                        @* <span class="text-danger" asp-validation-for="ConfirmPassword"></span> *@
+                    </div>
+                </div>
+                <div class="text-danger" asp-validation-summary="All"></div>
+                <div class="d-flex flex-row justify-content-center mt-5">
+                    <button type="submit" class="btn btn-success w-75" >Sign up</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
