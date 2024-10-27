@@ -39,8 +39,13 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.MapGet("/", async context => 
+{
+    await Task.Run(() => context.Response.Redirect("/Account/Login"));
+});
+
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Employee}/{action=Index}/{id?}");
+    name: "defaultWithId",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

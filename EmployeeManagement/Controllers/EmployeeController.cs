@@ -4,6 +4,7 @@ using EmployeeManagement.Models;
 using EmployeeManagement.Services.EmployeeRepo;
 using EmployeeManagement.Contracts.Request;
 using EmployeeManagement.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EmployeeManagement.Controllers;
 
@@ -21,7 +22,7 @@ public class EmployeeController : Controller
         _logger = logger;
         _hostingEnv = environment;
     }
-    
+    [Authorize]
     public IActionResult Index()
     {
         List<Employee> model = _employeeService.GetEmployeeList();
