@@ -10,8 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextPool<AppDbContext>(opt => 
     opt.UseSqlServer(builder.Configuration.GetConnectionString("EmployeeDbConnection")));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(opt => {
+    opt.Password.RequiredLength = 8;
+    opt.Password.RequiredUniqueChars = 1;
+    opt.Password.RequireUppercase = false;
+}).AddEntityFrameworkStores<AppDbContext>();
+
 // Add services to the container.
 builder.Services.AddMvc();
 builder.Services.AddScoped<IEmployeeService, SQLEmployeeRepo>();

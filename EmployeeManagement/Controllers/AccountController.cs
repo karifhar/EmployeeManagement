@@ -56,5 +56,37 @@ namespace EmployeeManagement.Controllers
 
             return View(input);
         }
+
+        [HttpGet]
+        public IActionResult Login() 
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel req) 
+        {
+            if(ModelState.IsValid) 
+            {
+                var result = await _signInManager.PasswordSignInAsync(req.Email, req.Password, false, false);
+
+                if(!result.Succeeded) 
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid Login Atempt");
+                    Debug.WriteLine("LOGIN");
+                    return View();
+                } 
+                
+            }
+            return RedirectToAction("index", "employee");
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout() 
+        {
+            await _signInManager.SignOutAsync();
+            return Ok(new { success = true});
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject SignInManager<IdentityUser> signInManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -22,18 +24,53 @@
                     <a class="nav-link" asp-action="create" asp-controller="employee">Create</a>
                 </div>
                 <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="">Login</a>
-                    <a class="nav-link" asp-controller="Account" asp-action="register">Register</a>
+                    @if(signInManager.IsSignedIn(User)) {
+                        <button id="logoutButton" class="nav-link btn btn-link" type="button">Logout</button>
+                    } else {
+                        <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                        <a class="nav-link" asp-controller="Account" asp-action="register">Register</a>
+                    }
                 </div>
             </div>
-            
         </div>
     </nav>
     @RenderBody()
+
+    @await Html.PartialAsync("~/Views/Shared/Component/_LogoutModal.cshtml")
+
     @if(IsSectionDefined("Scripts")) {
         @RenderSection("Scripts", required: true)
     }
-    
+ 
     <script src="~/lib/bootstrap/dist/js/bootstrap.js" ></script>
+    
+    <script>
+        $(document).ready(function () {
+            logoutHandle(); 
+        });
+
+        function logoutHandle() {
+            $('#logoutButton').click(() => {
+                $('#logoutModal').modal('show');
+            });
+
+            $('#confirmLogout').off('click').on('click', () => {
+                $.ajax({
+                    url: '@Url.Action("Logout", "Account")',
+                    type: 'POST',
+                    success: (response) => {
+                        if(response.success) {
+                            window.location.href = '@Url.Action("Login", "Account")';
+                        }
+                    },
+                    error: () => {
+                        alert("Failed to sign out. Please try again.");
+                    }
+
+                })
+            })
+        }
+    </script>
+    
 </body>
 </html>
