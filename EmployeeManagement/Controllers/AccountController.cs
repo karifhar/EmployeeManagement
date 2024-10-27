@@ -73,7 +73,6 @@ namespace EmployeeManagement.Controllers
                 if(!result.Succeeded) 
                 {
                     ModelState.AddModelError(string.Empty, "Invalid Login Atempt");
-                    Debug.WriteLine("LOGIN");
                     return View();
                 } 
                 
@@ -86,7 +85,7 @@ namespace EmployeeManagement.Controllers
         public async Task<IActionResult> Logout() 
         {
             await _signInManager.SignOutAsync();
-            return Ok(new { success = true});
+            return Ok(new {success = true, redirectUrl = Url.Action("login", "account")});
         }
     }
 }

@@ -60,7 +60,7 @@
                     type: 'POST',
                     success: (response) => {
                         if(response.success) {
-                            window.location.href = '@Url.Action("Login", "Account")';
+                            window.location.href = response.redirectUrl;
                         }
                     },
                     error: () => {
