@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace EmployeeManagement.Controllers;
 
+[Authorize]
 public class EmployeeController : Controller
 {
     private readonly IEmployeeService _employeeService;
@@ -22,7 +23,7 @@ public class EmployeeController : Controller
         _logger = logger;
         _hostingEnv = environment;
     }
-    [Authorize]
+    
     public IActionResult Index()
     {
         List<Employee> model = _employeeService.GetEmployeeList();
