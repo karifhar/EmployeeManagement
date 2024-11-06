@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using EmployeeManagement.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EmployeeManagement.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -64,21 +66,28 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel req) 
+        public async Task<IActionResult> Login(LoginViewModel req, string returnUrl = "") 
         {
             if(ModelState.IsValid) 
             {
                 var result = await _signInManager.PasswordSignInAsync(req.Email, req.Password, false, false);
 
-                if(!result.Succeeded) 
+                if(result.Succeeded) 
+                {
+                    if(!string.IsNullOrWhiteSpace(returnUrl)) 
+                    {
+                        return LocalRedirect(returnUrl);
+                    }
+
+                    return RedirectToAction("index", "employee");
+                } 
+                else 
                 {
                     ModelState.AddModelError(string.Empty, "Invalid Login Atempt");
-                    return View();
-                } 
-                
+                }
+ 
             }
-            return RedirectToAction("index", "employee");
-
+            return View();
         }
 
         [HttpPost]

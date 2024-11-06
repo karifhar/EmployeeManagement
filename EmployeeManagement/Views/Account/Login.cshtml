@@ -4,22 +4,24 @@
     ViewBag.Title = "Log in to Web";
 }
 
+
 <div class="container mt-5 p-5">
+    <link rel="stylesheet" href="~/css/validate.css">
     <div class="row">
-        <form class="card p-5 m-auto col-12 col-md-6" asp-controller="Account" asp-action="login" method="post">
+        <form id="loginForm" class="card p-5 m-auto col-12 col-md-6" method="post">
             <div class="card-body">
                 <h3 class="text-center card-title mb-3">Login Account</h3>
                 <div class="row mb-3">
                     <div class="col">
                         <label class="form-label p-0" for="email">Email / Username: </label>
-                        <input type="email" class="form-control" id="email" name="Email" required>
+                        <input type="email" class="form-control" id="email" name="email" required>
                         @* <span class="text-danger" asp-validation-for="Email"></span> *@
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col">
                         <label class="form-label p-0" for="password">Password: </label>
-                        <input type="password" class="form-control" id="password" name="Password" required>
+                        <input type="password" class="form-control" id="password" name="password" required>
                         @* <span class="text-danger" asp-validation-for="Password"></span> *@
                     </div>
                 </div>
@@ -49,4 +51,11 @@
             </div>
         </form>
     </div>
+    @section Scripts {
+        <script>
+            $(document).ready(function() {
+                $('#loginForm').validate();
+            });
+        </script>
+    }
 </div>

@@ -1,7 +1,10 @@
 using System.Diagnostics;
+using System.Net;
 using EmployeeManagement.Models;
 using EmployeeManagement.Services.EmployeeRepo;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,12 +15,15 @@ builder.Services.AddDbContextPool<AppDbContext>(opt =>
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(opt => {
     opt.Password.RequiredLength = 8;
-    opt.Password.RequiredUniqueChars = 1;
+    opt.Password.RequireNonAlphanumeric = false;
     opt.Password.RequireUppercase = false;
 }).AddEntityFrameworkStores<AppDbContext>();
 
 // Add services to the container.
-builder.Services.AddMvc();
+builder.Services.AddMvc(opt => {
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    opt.Filters.Add(new AuthorizeFilter(policy));
+}).AddXmlSerializerFormatters();
 builder.Services.AddScoped<IEmployeeService, SQLEmployeeRepo>();
 
 var app = builder.Build();
@@ -39,13 +45,13 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapGet("/", async context => 
-{
-    await Task.Run(() => context.Response.Redirect("/Account/Login"));
-});
+// app.MapGet("/", async context => 
+// {
+//     await Task.Run(() => context.Response.Redirect("/Account/Login"));
+// });
 
 app.MapControllerRoute(
-    name: "defaultWithId",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    name: "default",
+    pattern: "{controller=Employee}/{action=Index}/{id?}");
 
 app.Run();
