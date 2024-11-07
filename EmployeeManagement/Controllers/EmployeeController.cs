@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace EmployeeManagement.Controllers;
 
-[Authorize]
+
 public class EmployeeController : Controller
 {
     private readonly IEmployeeService _employeeService;

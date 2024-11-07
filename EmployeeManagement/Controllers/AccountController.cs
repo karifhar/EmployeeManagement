@@ -31,6 +31,13 @@ namespace EmployeeManagement.Controllers
             return View();
         }
 
+        [HttpGet()]
+        public async Task<IActionResult> IsEmailUsed(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            return user == null ? Json(true) : Json("Email already use");
+        }
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel input) 
         {
@@ -51,7 +58,7 @@ namespace EmployeeManagement.Controllers
                 
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError("", error.Description);
+                   // ModelState.AddModelError("", error.Description);
                 }
                 
             }

@@ -9,7 +9,7 @@ function logoutHandle() {
 
     $('#confirmLogout').off('click').on('click', () => {
         $.ajax({
-            url: '@Url.Action("Logout", "Account")',
+            url: '/Account/Logout',
             type: 'POST',
             success: (response) => {
                 if(response.success) {
