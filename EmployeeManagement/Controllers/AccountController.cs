@@ -35,7 +35,7 @@ namespace EmployeeManagement.Controllers
         public async Task<IActionResult> IsEmailUsed(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            return user == null ? Json(true) : Json("Email already use");
+            return user == null ? Json(true) : Json($"Email {email} already use");
         }
 
         [HttpPost]
@@ -55,11 +55,6 @@ namespace EmployeeManagement.Controllers
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("index", "employee");
                 } 
-                
-                foreach (var error in result.Errors)
-                {
-                   // ModelState.AddModelError("", error.Description);
-                }
                 
             }
 
