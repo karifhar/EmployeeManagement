@@ -17,11 +17,8 @@ function logoutHandle() {
                 }
             },
             error: (error) => {
-                alert("Failed to sign out. Please try again.");
-                console.log(error);
-                
+                alert("Failed to sign out. Please try again.");  
             }
-
         })
     })
 }
