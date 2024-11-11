@@ -53,9 +53,8 @@ namespace EmployeeManagement.Controllers
                 if(result.Succeeded) 
                 {
                     await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("index", "employee");
-                } 
-                
+                    return Ok( new {Success = true, redirectUrl = Url.Action("index", "employee")});
+                }
             }
 
             return View(input);

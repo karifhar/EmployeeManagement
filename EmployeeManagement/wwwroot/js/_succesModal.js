@@ -24,3 +24,24 @@ function SuccesModalHandler(isSuccess) {
         }, 3000)
     }
 }
+
+function sendDataForm(id, pathUrl) {
+    $('#' + id).submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: pathUrl,
+            type: 'POST',
+            data: $(this).serialize(),
+            success: (response) => {
+                SuccesModalHandler(response.success);
+
+                setTimeout(() => {
+                    window.location.href = response.redirectUrl;
+                }, 2000)
+            },
+            error: (error) => {
+                SuccesModalHandler(false);
+            }
+        });
+    });
+}

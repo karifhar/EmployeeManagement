@@ -39,10 +39,14 @@
         </form>
     </div>
     @section Scripts {
+        <script src="~/js/_succesModal.js"></script>
         <script>
             $(document).ready(function() {
                 $('#registerForm').validate();
+                sendDataForm('registerForm', '/Account/Register');
             });
         </script>
     }
 </div>
+<!--Modal--->
+<partial name="~/Views/Shared/Component/_SuccesModal.cshtml"/>
