@@ -38,5 +38,70 @@ namespace EmployeeManagement.Controllers
             
             return Ok(new {success = true});
         }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public List<RoleViewModel> GetRolesList() 
+        {
+            List<RoleViewModel> result = new List<RoleViewModel>();
+            var data = _roleManager.Roles.ToList();
+
+            foreach (var item in data)
+            {
+                var role = new RoleViewModel();
+                role.Id = item.Id;
+#pragma warning disable CS8601 // Possible null reference assignment.
+                role.RoleName = item.Name;
+#pragma warning restore CS8601 // Possible null reference assignment.
+
+                result.Add(role);
+            }
+
+            return result;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditRole(string id) 
+        {
+            IdentityRole roleData = await _roleManager.FindByIdAsync(id);
+
+            if (roleData == null) 
+            {
+                return BadRequest($"Role with id : {id} is not found");
+            }
+
+            RoleViewModel model = new RoleViewModel();
+            model.Id = roleData.Id;
+#pragma warning disable CS8601 // Possible null reference assignment.
+            model.RoleName = roleData.Name;
+#pragma warning restore CS8601 // Possible null reference assignment.
+
+            return View(model);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditRole(RoleViewModel input) 
+        {
+            var roleData = await _roleManager.FindByIdAsync(input.Id);
+            if (roleData == null)
+                throw new ArgumentException("Id is not found");
+
+
+            roleData.Name = input.RoleName;
+
+            var result = await _roleManager.UpdateAsync(roleData);
+
+            if (!result.Succeeded) {
+                 return Ok(new {success = false});
+            }
+
+            return Ok(new {success = true, redirectUrl = "/administration/index"});
+        }
+
     }
 }

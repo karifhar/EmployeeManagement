@@ -1,0 +1,78 @@
+@{
+    ViewBag.Title = "Role List";
+}
+
+<div class="container mt-5 p-5 w-50">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.jqueryui.min.css">
+    
+    <h3 class="text-center card-title mb-5">Role Listing</h3>
+    <table id="roleTable" class="table table-hover table-bordered"  style="width:70% ">
+        <thead>
+            <tr>
+                <th class="text-center" scope="col" style="background-color: #343a40; color: white;">ID</th>
+                <th scope="col" style="background-color: #343a40; color: white;">Role</th>
+                <th class="text-center" style="background-color: #343a40; color: white;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--diisi datatable-->
+        </tbody>
+    </table>
+
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.jqueryui.min.js"></script>
+
+    @section Scripts {
+        <script>
+            $(document).ready(() => {
+                $.ajax({
+                    url: '/administration/GetRolesList',
+                    type: 'POST',
+                    success: (response) => {
+                        $('#roleTable').dataTable({
+                            data: response,
+                            columns: [
+                                {data: 'id'},
+                                {data: 'roleName'},
+                                {data: null}
+                            ],
+                            autoWidth: true,
+                            columnDefs: [
+                                {
+                                    target: 0,
+                                    width: '40%'
+                                },
+                                {
+                                    target: 1,
+                                    width: '30%',
+                                    createdCell: (td, cellData, rowData, row, col) => {
+                                        $(td).addClass('text-uppercase');
+                                    }
+                                },
+                                {
+                                    target: 2,
+                                    orderable: false,
+                                    createdCell: (td, cellData, rowData, row, col) => {
+                                        $(td).html(
+                                            `<button id="editRolebtn" class="btn btn-primary" data-id=${rowData['id']}>Edit</button>
+                                            <button id="deleteRolebtn" class="btn btn-danger" data-id=${rowData['id']}>Delete</button>`
+                                        ).wrapInner(`<div class='text-center'></div>`);
+
+                                    }
+                                }
+                            ],
+                            lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ]
+                        })
+                    }
+                });
+
+                $('#roleTable tbody').on('click', '#editRolebtn', function() {
+                    let id = $(this).data('id');
+                    window.location.href = '/administration/EditRole?id=' + id
+                });
+            });
+        </script>
+    }
+    
+</div>

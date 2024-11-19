@@ -1,0 +1,50 @@
+@model RoleViewModel
+
+@{
+    ViewBag.Title = "Edit Role";
+}
+
+<div class="container mt-5 p-5">
+    <link rel="stylesheet" href="~/css/validate.css">
+    <div class="row">
+        <form id="editRoleForm" class="card p-5 m-auto col-12 col-md-6">
+            <div class="card-body">
+                <h3 class="text-center card-title mb-3">Edit Role</h3>
+                <div class="row" style="display: none;">
+                    <div class="col">
+                        <label class="form-label p-0" asp-for="Id"></label>
+                        <input type="hidden" class="form-control" asp-for="Id" value="@Model.Id">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label p-0">Role Name: </label>
+                        <input type="text" class="form-control" value="@Model.RoleName" disabled>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label p-0" asp-for="RoleName">Change Name: </label>
+                        <input type="text" class="form-control" asp-for="RoleName">
+                        <span class="text-danger" asp-validation-for="RoleName"></span>
+                    </div>
+                </div>
+                @* <div class="text-danger" asp-validation-summary="All"></div> *@
+                <div class="d-flex flex-row justify-content-center mt-5">
+                    <button type="submit" class="btn btn-primary w-75" >Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    @section Scripts {
+        <script src="~/js/_succesModal.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#editRoleForm').validate();
+                sendDataForm('editRoleForm', '/Administration/EditRole', 'PUT');
+            });
+        </script>
+    }
+</div>
+<!-- Success Modal -->
+<partial name="~/Views/Shared/Component/_SuccesModal.cshtml"/>

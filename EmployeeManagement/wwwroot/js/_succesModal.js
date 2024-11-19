@@ -25,18 +25,21 @@ function SuccesModalHandler(isSuccess) {
     }
 }
 
-function sendDataForm(id, pathUrl) {
+function sendDataForm(id, pathUrl, method) {
     $('#' + id).submit(function(e) {
         e.preventDefault();
+        
         $.ajax({
             url: pathUrl,
-            type: 'POST',
+            type: method,
             data: $(this).serialize(),
             success: (response) => {
                 SuccesModalHandler(response.success);
 
                 setTimeout(() => {
-                    window.location.href = response.redirectUrl;
+                    if(response.redirectUrl) {
+                        window.location.href = response.redirectUrl;
+                    }
                 }, 2000)
             },
             error: (error) => {
