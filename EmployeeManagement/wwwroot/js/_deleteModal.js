@@ -1,3 +1,27 @@
+
+function deleteHandler(id, pathUrl) {
+    $('#modalHeader').addClass('bg-danger text-white');
+
+    $('#delete-btn').off('click').on('click', function() {
+        $.ajax({
+            url: pathUrl,
+            type: 'DELETE',
+            data: id,
+            success: (response) => {
+                $('.btn').hide();
+                $('#modalHeader').removeClass('bg-danger').addClass('bg-success text-white');
+                SuccesModalHandler(response.success);
+            },
+            error: (response) => {
+                $('.btnModal').hide();
+                $('#modalIconContainer').html('<i class="bi bi-x-circle-fill text-danger" style="font-size: 3rem;"></i>');
+                SuccesModalHandler(false);
+            }
+        });
+    });
+}
+
+
 function SuccesModalHandler(isSuccess) {
     if(isSuccess) {
         // $('#modalHeader').removeClass('bg-danger').addClass('bg-success text-white');
@@ -26,26 +50,3 @@ function SuccesModalHandler(isSuccess) {
     }
 }
 
-function sendDataForm(id, pathUrl, method) {
-    $('#' + id).submit(function(e) {
-        e.preventDefault();
-        
-        $.ajax({
-            url: pathUrl,
-            type: method,
-            data: $(this).serialize(),
-            success: (response) => {
-                SuccesModalHandler(response.success);
-
-                setTimeout(() => {
-                    if(response.redirectUrl) {
-                        window.location.href = response.redirectUrl;
-                    }
-                }, 2000)
-            },
-            error: (error) => {
-                SuccesModalHandler(false);
-            }
-        });
-    });
-}

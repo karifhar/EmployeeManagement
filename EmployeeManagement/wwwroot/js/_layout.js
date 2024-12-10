@@ -4,6 +4,7 @@ $(document).ready(function () {
 
 function logoutHandle() {
     $('#logoutButton').click(() => {
+        $('#logoutModal').removeAttr('inert');
         $('#logoutModal').modal('show');
     });
 

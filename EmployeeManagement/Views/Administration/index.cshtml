@@ -22,6 +22,7 @@
 
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.jqueryui.min.js"></script>
+    
 
     @section Scripts {
         <script>
@@ -71,8 +72,18 @@
                     let id = $(this).data('id');
                     window.location.href = '/administration/EditRole?id=' + id
                 });
+
+                $('#roleTable tbody').on('click', '#deleteRolebtn', function() {
+                    let id = $(this).data('id');
+                    $('#deleteModal').removeAttr('inert');
+                    $('#deleteModal').modal('show');
+                    deleteHandler(id, '/administration/delete');
+                });
+
             });
         </script>
     }
     
+    <script src="~/js/_deleteModal.js"></script>
 </div>
+<partial name="~/Views/Shared/Component/_deleteModal.cshtml"/>
