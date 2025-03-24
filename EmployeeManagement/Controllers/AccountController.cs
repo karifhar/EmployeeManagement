@@ -66,11 +66,6 @@ namespace EmployeeManagement.Controllers
             return View();
         }
 
-         private async Task<string> GetData()
-        {
-            await Task.Delay(2000); // Simulasi operasi asinkron
-            return "Data fetched";
-        }
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel req, string returnUrl = "") 

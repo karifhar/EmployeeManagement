@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EmployeeManagement.Models;
+using Microsoft.Extensions.Logging;
 
 namespace EmployeeManagement.Services.EmployeeRepo
 {
     public class SQLEmployeeRepo : IEmployeeService
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<SQLEmployeeRepo> _logger;
 
-        public SQLEmployeeRepo(AppDbContext context)
+        public SQLEmployeeRepo(AppDbContext context, ILogger<SQLEmployeeRepo> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public Employee CreateEmployee(Employee input)
